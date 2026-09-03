@@ -1,0 +1,128 @@
+openapi: 3.1.0
+info:
+  title: Datria Foundation Health API
+  version: 0.1.0
+  description: >-
+    Operational health contract for the foundation increment. Datria is a temporary
+    codename.
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development
+tags:
+  - name: Health
+paths:
+  /health/live:
+    get:
+      tags: [Health]
+      operationId: getLiveness
+      summary: Confirm that the API process can serve requests
+      responses:
+        '200':
+          description: API process is live
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LivenessResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /health/ready:
+    get:
+      tags: [Health]
+      operationId: getReadiness
+      summary: Confirm that the API and required dependencies are usable
+      responses:
+        '200':
+          description: API is ready to serve application traffic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessResponse'
+        '503':
+          description: At least one required dependency is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnavailableResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  schemas:
+    BaseHealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+          const: datria-api
+        timestamp:
+          type: string
+          format: date-time
+    LivenessResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseHealthResponse'
+    ReadinessResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseHealthResponse'
+        - type: object
+          additionalProperties: false
+          required: [checks]
+          properties:
+            checks:
+              type: object
+              additionalProperties: false
+              required: [database]
+              properties:
+                database:
+                  type: string
+                  enum: [up]
+    UnavailableResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, timestamp, checks]
+      properties:
+        status:
+          type: string
+          const: unavailable
+        service:
+          type: string
+          const: datria-api
+        timestamp:
+          type: string
+          format: date-time
+        checks:
+          type: object
+          additionalProperties: false
+          required: [database]
+          properties:
+            database:
+              type: string
+              enum: [down]
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [status, code, message, timestamp]
+      properties:
+        status:
+          type: integer
+          const: 500
+        code:
+          type: string
+          const: INTERNAL_ERROR
+        message:
+          type: string
+          const: An unexpected error occurred.
+        timestamp:
+          type: string
+          format: date-time
+  responses:
+    InternalError:
+      description: Sanitized unexpected failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+

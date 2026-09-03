@@ -1,5 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { Public } from "../authorization/authentication.guard";
 import {
   HealthService,
   LivenessResponse,
@@ -8,6 +9,7 @@ import {
 
 @ApiTags("Health")
 @Controller("health")
+@Public()
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 

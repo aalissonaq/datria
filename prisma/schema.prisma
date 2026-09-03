@@ -1,8 +1,6 @@
 // ==============================================================================
-// Datria Foundation Prisma Schema
-// Increment: 001-foundation
-// Note: No domain models are defined in this increment per data-model.md.
-// Persistent entities will be introduced in 002-identity-tenancy.
+// Datria Prisma Schema
+// Feature: 002-identity-tenancy
 // ==============================================================================
 
 generator client {
@@ -12,4 +10,279 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  BLOCKED
+  DISABLED
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+enum MembershipStatus {
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum RoleScope {
+  ORGANIZATION
+  PLATFORM
+}
+
+enum AuditOutcome {
+  SUCCESS
+  FAILURE
+  DENIED
+}
+
+model User {
+  id              String      @id @default(uuid()) @db.VarChar(36)
+  email           String      @db.VarChar(255)
+  normalizedEmail String      @unique @db.VarChar(255)
+  displayName     String      @db.VarChar(120)
+  status          UserStatus  @default(PENDING_VERIFICATION)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  passwordCredential       PasswordCredential?
+  sessions                 Session[]
+  emailVerificationTokens  EmailVerificationToken[]
+  passwordResetTokens      PasswordResetToken[]
+  memberships              Membership[]
+  platformRoles            PlatformRoleAssignment[] @relation("UserPlatformRoles")
+  createdOrganizations     Organization[]           @relation("CreatedOrganizations")
+  sentInvitations          Invitation[]             @relation("SentInvitations")
+  acceptedInvitations      Invitation[]             @relation("AcceptedInvitations")
+  assignedMembershipRoles  MembershipRole[]         @relation("AssignedMembershipRoles")
+  assignedPlatformRoles    PlatformRoleAssignment[] @relation("AssignedPlatformRoles")
+  consentRecords           ConsentRecord[]
+  auditEvents              AuditEvent[]             @relation("ActorAuditEvents")
+
+  @@index([status])
+}
+
+model PasswordCredential {
+  userId       String   @id @db.VarChar(36)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash String   @db.VarChar(255)
+  changedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Session {
+  id                String    @id @default(uuid()) @db.VarChar(36)
+  userId            String    @db.VarChar(36)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash  String    @db.VarChar(255)
+  tokenFamilyId     String    @db.VarChar(36)
+  currentJti        String    @db.VarChar(36)
+  previousJti       String?   @db.VarChar(36)
+  lastUsedAt        DateTime  @default(now())
+  idleExpiresAt     DateTime
+  absoluteExpiresAt DateTime
+  revokedAt         DateTime?
+  revokeReason      String?   @db.VarChar(80)
+  ipHash            String?   @db.VarChar(128)
+  userAgentHash     String?   @db.VarChar(128)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([tokenFamilyId])
+  @@index([idleExpiresAt])
+  @@index([absoluteExpiresAt])
+  @@index([revokedAt])
+}
+
+model EmailVerificationToken {
+  id         String    @id @default(uuid()) @db.VarChar(36)
+  userId     String    @db.VarChar(36)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique @db.VarChar(255)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(uuid()) @db.VarChar(36)
+  userId     String    @db.VarChar(36)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique @db.VarChar(255)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Organization {
+  id              String             @id @default(uuid()) @db.VarChar(36)
+  name            String             @db.VarChar(160)
+  slug            String             @unique @db.VarChar(80)
+  status          OrganizationStatus @default(ACTIVE)
+  timezone        String             @default("UTC") @db.VarChar(100)
+  createdByUserId String             @db.VarChar(36)
+  createdByUser   User               @relation("CreatedOrganizations", fields: [createdByUserId], references: [id])
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  memberships Membership[]
+  invitations Invitation[]
+  auditEvents AuditEvent[]
+
+  @@index([status])
+}
+
+model Membership {
+  id             String           @id @default(uuid()) @db.VarChar(36)
+  userId         String           @db.VarChar(36)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String           @db.VarChar(36)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  status         MembershipStatus @default(ACTIVE)
+  joinedAt       DateTime         @default(now())
+  suspendedAt    DateTime?
+  removedAt      DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  roles MembershipRole[]
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+  @@index([userId, status])
+}
+
+model Role {
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  code        String    @unique @db.VarChar(50)
+  scope       RoleScope
+  description String    @db.VarChar(255)
+
+  membershipRoles     MembershipRole[]
+  invitationRoles     InvitationRole[]
+  platformAssignments PlatformRoleAssignment[]
+}
+
+model MembershipRole {
+  membershipId     String   @db.VarChar(36)
+  membership       Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  roleId           String   @db.VarChar(36)
+  role             Role     @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  assignedByUserId String?  @db.VarChar(36)
+  assignedByUser   User?    @relation("AssignedMembershipRoles", fields: [assignedByUserId], references: [id], onDelete: SetNull)
+  assignedAt       DateTime @default(now())
+
+  @@id([membershipId, roleId])
+  @@index([roleId])
+}
+
+model PlatformRoleAssignment {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  userId           String    @db.VarChar(36)
+  user             User      @relation("UserPlatformRoles", fields: [userId], references: [id], onDelete: Cascade)
+  roleId           String    @db.VarChar(36)
+  role             Role      @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  assignedByUserId String?   @db.VarChar(36)
+  assignedByUser   User?     @relation("AssignedPlatformRoles", fields: [assignedByUserId], references: [id], onDelete: SetNull)
+  assignedAt       DateTime  @default(now())
+  revokedAt        DateTime?
+
+  @@unique([userId, roleId])
+  @@index([userId, revokedAt])
+  @@index([roleId])
+}
+
+model Invitation {
+  id               String           @id @default(uuid()) @db.VarChar(36)
+  organizationId   String           @db.VarChar(36)
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email            String           @db.VarChar(255)
+  normalizedEmail  String           @db.VarChar(255)
+  tokenHash        String           @unique @db.VarChar(255)
+  status           InvitationStatus @default(PENDING)
+  expiresAt        DateTime
+  acceptedAt       DateTime?
+  revokedAt        DateTime?
+  invitedByUserId  String           @db.VarChar(36)
+  invitedByUser    User             @relation("SentInvitations", fields: [invitedByUserId], references: [id])
+  acceptedByUserId String?          @db.VarChar(36)
+  acceptedByUser   User?            @relation("AcceptedInvitations", fields: [acceptedByUserId], references: [id], onDelete: SetNull)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  roles InvitationRole[]
+
+  @@index([organizationId, status])
+  @@index([normalizedEmail, status])
+  @@index([expiresAt])
+}
+
+model InvitationRole {
+  invitationId String     @db.VarChar(36)
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  roleId       String     @db.VarChar(36)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@id([invitationId, roleId])
+  @@index([roleId])
+}
+
+model ConsentRecord {
+  id              String    @id @default(uuid()) @db.VarChar(36)
+  userId          String    @db.VarChar(36)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentType    String    @db.VarChar(50)
+  documentVersion String    @db.VarChar(40)
+  acceptedAt      DateTime  @default(now())
+  withdrawnAt     DateTime?
+  evidenceHash    String?   @db.VarChar(255)
+
+  @@unique([userId, documentType, documentVersion])
+  @@index([userId])
+}
+
+model AuditEvent {
+  id             String       @id @default(uuid()) @db.VarChar(36)
+  actorUserId    String?      @db.VarChar(36)
+  actorUser      User?        @relation("ActorAuditEvents", fields: [actorUserId], references: [id], onDelete: SetNull)
+  organizationId String?      @db.VarChar(36)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  action         String       @db.VarChar(80)
+  targetType     String       @db.VarChar(80)
+  targetId       String?      @db.VarChar(36)
+  outcome        AuditOutcome
+  correlationId  String       @db.VarChar(36)
+  metadata       Json?
+  occurredAt     DateTime     @default(now())
+  expiresAt      DateTime
+
+  @@index([organizationId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([action])
+  @@index([expiresAt])
+  @@index([correlationId])
 }

@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: "list",
   use: {
     baseURL: "http://localhost:5173",
@@ -22,13 +22,16 @@ export default defineConfig({
       command: "pnpm dev:api",
       url: "http://localhost:3000/api/v1/health/live",
       reuseExistingServer: !process.env.CI,
-      timeout: 30000,
+      timeout: 90000,
+      env: {
+        PLAYWRIGHT: "true",
+      },
     },
     {
       command: "pnpm dev:web",
       url: "http://localhost:5173",
       reuseExistingServer: !process.env.CI,
-      timeout: 30000,
+      timeout: 90000,
     },
   ],
 });

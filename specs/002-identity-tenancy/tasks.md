@@ -10,9 +10,9 @@
 
 **Purpose**: Project dependency installation and shared infrastructure configuration
 
-- [ ] T001 Install backend dependencies (`argon2`, `@nestjs/jwt`, `nodemailer`, `@types/nodemailer`, `cookie-parser`, `@types/cookie-parser`) in `apps/api/package.json`
-- [ ] T002 [P] Configure local environment schema and runtime environment variables in `apps/api/src/config/environment.config.ts` and `.env.example`
-- [ ] T003 [P] Configure Mailpit connection and mailer transport configuration in `apps/api/src/modules/mail/mail.config.ts`
+- [X] T001 Install backend dependencies (`argon2`, `@nestjs/jwt`, `nodemailer`, `@types/nodemailer`, `cookie-parser`, `@types/cookie-parser`) in `apps/api/package.json`
+- [X] T002 [P] Configure local environment schema and runtime environment variables in `apps/api/src/config/environment.config.ts` and `.env.example`
+- [X] T003 [P] Configure Mailpit connection and mailer transport configuration in `apps/api/src/modules/mail/mail.config.ts`
 
 ---
 
@@ -22,18 +22,18 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Update Prisma schema with all identity, session, organization, membership, role, invitation, consent, and audit models in `prisma/schema.prisma`
-- [ ] T005 Create and run database migration for identity and multi-tenancy schema in `prisma/migrations/`
-- [ ] T006 [P] Implement deterministic seed script for static roles (`INSTITUTION_ADMIN`, `TEACHER`, `REVIEWER`, `PARTICIPANT`, `SAAS_ADMIN`) in `prisma/seed.ts`
-- [ ] T007 [P] Implement standardized API error response filter and domain exceptions in `apps/api/src/common/filters/http-exception.filter.ts`
-- [ ] T008 [P] Implement correlation ID middleware attaching UUID to request context and response headers in `apps/api/src/common/middleware/correlation-id.middleware.ts`
-- [ ] T009 [P] Implement Argon2id password hasher service with SEC-EXC-001 parameters (`m=19456`, `t=2`, `p=1`) and common password blacklist validation in `apps/api/src/modules/identity/infrastructure/argon2-password-hasher.ts`
-- [ ] T010 [P] Implement crypto token generator service for single-use expiring token hashes in `apps/api/src/modules/identity/infrastructure/token.service.ts`
-- [ ] T011 [P] Implement CSRF double-submit protection middleware and `GET /auth/csrf` endpoint in `apps/api/src/modules/identity/presentation/csrf.controller.ts`
-- [ ] T012 Implement `NodemailerMailAdapter` conforming to `MailPort` in `apps/api/src/modules/mail/nodemailer-mail.adapter.ts`
-- [ ] T013 [P] Implement append-only `AuditService` and repository for security/admin audit events in `apps/api/src/modules/audit/audit.service.ts`
-- [ ] T014 Implement `TenantContextResolver`, `AuthenticationGuard`, and `PolicyService` for tenant isolation in `apps/api/src/modules/authorization/tenant-context.resolver.ts`
-- [ ] T015 [P] Implement frontend API client with credentials, CSRF token handling, and error toast support in `apps/web/src/lib/api-client.ts`
+- [X] T004 Update Prisma schema with all identity, session, organization, membership, role, invitation, consent, and audit models in `prisma/schema.prisma`
+- [X] T005 Create and run database migration for identity and multi-tenancy schema in `prisma/migrations/`
+- [X] T006 [P] Implement deterministic seed script for static roles (`INSTITUTION_ADMIN`, `TEACHER`, `REVIEWER`, `PARTICIPANT`, `SAAS_ADMIN`) in `prisma/seed.ts`
+- [X] T007 [P] Implement standardized API error response filter and domain exceptions in `apps/api/src/common/filters/http-exception.filter.ts`
+- [X] T008 [P] Implement correlation ID middleware attaching UUID to request context and response headers in `apps/api/src/common/middleware/correlation-id.middleware.ts`
+- [X] T009 [P] Implement Argon2id password hasher service with SEC-EXC-001 parameters (`m=19456`, `t=2`, `p=1`) and common password blacklist validation in `apps/api/src/modules/identity/infrastructure/argon2-password-hasher.ts`
+- [X] T010 [P] Implement crypto token generator service for single-use expiring token hashes in `apps/api/src/modules/identity/infrastructure/token.service.ts`
+- [X] T011 [P] Implement CSRF double-submit protection middleware and `GET /auth/csrf` endpoint in `apps/api/src/modules/identity/presentation/csrf.controller.ts`
+- [X] T012 Implement `NodemailerMailAdapter` conforming to `MailPort` in `apps/api/src/modules/mail/nodemailer-mail.adapter.ts`
+- [X] T013 [P] Implement append-only `AuditService` and repository for security/admin audit events in `apps/api/src/modules/audit/audit.service.ts`
+- [X] T014 Implement `TenantContextResolver`, `AuthenticationGuard`, and `PolicyService` for tenant isolation in `apps/api/src/modules/authorization/tenant-context.resolver.ts`
+- [X] T015 [P] Implement frontend API client with credentials, CSRF token handling, and error toast support in `apps/web/src/lib/api-client.ts`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin in parallel
 
@@ -49,19 +49,19 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T016 [P] [US1] Unit test for registration validation, email normalization, and consent validation in `apps/api/test/unit/identity/register.spec.ts`
-- [ ] T017 [P] [US1] Integration test for registration, email verification token consumption, and personal context initialization in `apps/api/test/integration/identity/registration.integration-spec.ts`
+- [X] T016 [P] [US1] Unit test for registration validation, email normalization, and consent validation in `apps/api/test/unit/identity/register.spec.ts`
+- [X] T017 [P] [US1] Integration test for registration, email verification token consumption, and personal context initialization in `apps/api/test/integration/identity/registration.integration-spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [P] [US1] Create verification email HTML/text template in `apps/api/src/modules/mail/templates/verify-email.template.ts`
-- [ ] T019 [P] [US1] Implement UserRepository and ConsentRecordRepository in `apps/api/src/modules/identity/infrastructure/user.repository.ts`
-- [ ] T020 [US1] Implement RegisterService with email normalization and neutral duplicate response in `apps/api/src/modules/identity/application/register.service.ts`
-- [ ] T021 [US1] Implement VerifyEmailService and ResendVerificationService in `apps/api/src/modules/identity/application/verify-email.service.ts`
-- [ ] T022 [US1] Implement `POST /auth/register`, `POST /auth/verify-email`, and `POST /auth/resend-verification` in `apps/api/src/modules/identity/presentation/auth.controller.ts`
-- [ ] T023 [P] [US1] Implement accessible frontend Registration page with password strength feedback in `apps/web/src/features/auth/RegisterPage.tsx`
-- [ ] T024 [P] [US1] Implement frontend Email Verification page and resend button in `apps/web/src/features/auth/VerifyEmailPage.tsx`
-- [ ] T025 [US1] E2E test for registration, Mailpit email verification, and personal context landing in `tests/e2e/registration.spec.ts`
+- [X] T018 [P] [US1] Create verification email HTML/text template in `apps/api/src/modules/mail/templates/verify-email.template.ts`
+- [X] T019 [P] [US1] Implement UserRepository and ConsentRecordRepository in `apps/api/src/modules/identity/infrastructure/user.repository.ts`
+- [X] T020 [US1] Implement RegisterService with email normalization and neutral duplicate response in `apps/api/src/modules/identity/application/register.service.ts`
+- [X] T021 [US1] Implement VerifyEmailService and ResendVerificationService in `apps/api/src/modules/identity/application/verify-email.service.ts`
+- [X] T022 [US1] Implement `POST /auth/register`, `POST /auth/verify-email`, and `POST /auth/resend-verification` in `apps/api/src/modules/identity/presentation/auth.controller.ts`
+- [X] T023 [P] [US1] Implement accessible frontend Registration page with password strength feedback in `apps/web/src/features/auth/RegisterPage.tsx`
+- [X] T024 [P] [US1] Implement frontend Email Verification page and resend button in `apps/web/src/features/auth/VerifyEmailPage.tsx`
+- [X] T025 [US1] E2E test for registration, Mailpit email verification, and personal context landing in `tests/e2e/registration.spec.ts`
 
 **Checkpoint**: User Story 1 functional and verifiable independently.
 
@@ -77,19 +77,19 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T026 [P] [US2] Unit test for session validation, rotation, and reuse detection in `apps/api/test/unit/sessions/session.service.spec.ts`
-- [ ] T027 [P] [US2] Integration test for login, token refresh rotation, refresh reuse detection family revocation, and logout in `apps/api/test/integration/sessions/session-lifecycle.integration-spec.ts`
-- [ ] T028 [P] [US2] Integration test for login rate limiting and neutral error anti-enumeration in `apps/api/test/integration/identity/auth-abuse.integration-spec.ts`
+- [X] T026 [P] [US2] Unit test for session validation, rotation, and reuse detection in `apps/api/test/unit/sessions/session.service.spec.ts`
+- [X] T027 [P] [US2] Integration test for login, token refresh rotation, refresh reuse detection family revocation, and logout in `apps/api/test/integration/sessions/session-lifecycle.integration-spec.ts`
+- [X] T028 [P] [US2] Integration test for login rate limiting and neutral error anti-enumeration in `apps/api/test/integration/identity/auth-abuse.integration-spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T029 [P] [US2] Implement SessionRepository in `apps/api/src/modules/sessions/session.repository.ts`
-- [ ] T030 [US2] Implement SessionService managing idle (30m), absolute (8h) TTLs, rotation, and reuse detection in `apps/api/src/modules/sessions/session.service.ts`
-- [ ] T031 [US2] Implement LoginService and LogoutService issuing and clearing secure cookies in `apps/api/src/modules/identity/application/login.service.ts`
-- [ ] T032 [US2] Implement `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`, and `GET /me` endpoints in `apps/api/src/modules/identity/presentation/auth.controller.ts`
-- [ ] T033 [P] [US2] Implement rate limiting guard for auth endpoints in `apps/api/src/modules/identity/infrastructure/rate-limiter.guard.ts`
-- [ ] T034 [P] [US2] Implement accessible frontend Login page and AuthProvider context in `apps/web/src/features/auth/LoginPage.tsx` and `apps/web/src/features/auth/AuthProvider.tsx`
-- [ ] T035 [US2] E2E test for login, token rotation, idle expiration, and logout in `tests/e2e/auth-sessions.spec.ts`
+- [X] T029 [P] [US2] Implement SessionRepository in `apps/api/src/modules/sessions/session.repository.ts`
+- [X] T030 [US2] Implement SessionService managing idle (30m), absolute (8h) TTLs, rotation, and reuse detection in `apps/api/src/modules/sessions/session.service.ts`
+- [X] T031 [US2] Implement LoginService and LogoutService issuing and clearing secure cookies in `apps/api/src/modules/identity/application/login.service.ts`
+- [X] T032 [US2] Implement `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`, and `GET /me` endpoints in `apps/api/src/modules/identity/presentation/auth.controller.ts`
+- [X] T033 [P] [US2] Implement rate limiting guard for auth endpoints in `apps/api/src/modules/identity/infrastructure/rate-limiter.guard.ts`
+- [X] T034 [P] [US2] Implement accessible frontend Login page and AuthProvider context in `apps/web/src/features/auth/LoginPage.tsx` and `apps/web/src/features/auth/AuthProvider.tsx`
+- [X] T035 [US2] E2E test for login, token rotation, idle expiration, and logout in `tests/e2e/auth-sessions.spec.ts`
 
 **Checkpoint**: User Stories 1 and 2 work together; user registration, verification, login, refresh, and logout are functional.
 
@@ -105,17 +105,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T036 [P] [US3] Unit test for password reset token lifecycle and session revocation logic in `apps/api/test/unit/identity/password-reset.spec.ts`
-- [ ] T037 [P] [US3] Integration test for forgot-password, token verification, password reset, and session invalidation in `apps/api/test/integration/identity/password-recovery.integration-spec.ts`
+- [X] T036 [P] [US3] Unit test for password reset token lifecycle and session revocation logic in `apps/api/test/unit/identity/password-reset.spec.ts`
+- [X] T037 [P] [US3] Integration test for forgot-password, token verification, password reset, and session invalidation in `apps/api/test/integration/identity/password-recovery.integration-spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T038 [P] [US3] Create password reset email HTML/text template in `apps/api/src/modules/mail/templates/password-reset.template.ts`
-- [ ] T039 [P] [US3] Implement PasswordResetTokenRepository in `apps/api/src/modules/identity/infrastructure/password-reset-token.repository.ts`
-- [ ] T040 [US3] Implement PasswordResetService handling neutral request, token validation, hash update, and atomic session revocation in `apps/api/src/modules/identity/application/password-reset.service.ts`
-- [ ] T041 [US3] Implement `POST /auth/forgot-password` and `POST /auth/reset-password` endpoints in `apps/api/src/modules/identity/presentation/auth.controller.ts`
-- [ ] T042 [P] [US3] Implement accessible frontend ForgotPassword and ResetPassword pages in `apps/web/src/features/auth/ForgotPasswordPage.tsx` and `apps/web/src/features/auth/ResetPasswordPage.tsx`
-- [ ] T043 [US3] E2E test for complete password recovery journey in `tests/e2e/password-recovery.spec.ts`
+- [X] T038 [P] [US3] Create password reset email HTML/text template in `apps/api/src/modules/mail/templates/password-reset.template.ts`
+- [X] T039 [P] [US3] Implement PasswordResetTokenRepository in `apps/api/src/modules/identity/infrastructure/password-reset-token.repository.ts`
+- [X] T040 [US3] Implement PasswordResetService handling neutral request, token validation, hash update, and atomic session revocation in `apps/api/src/modules/identity/application/password-reset.service.ts`
+- [X] T041 [US3] Implement `POST /auth/forgot-password` and `POST /auth/reset-password` endpoints in `apps/api/src/modules/identity/presentation/auth.controller.ts`
+- [X] T042 [P] [US3] Implement accessible frontend ForgotPassword and ResetPassword pages in `apps/web/src/features/auth/ForgotPasswordPage.tsx` and `apps/web/src/features/auth/ResetPasswordPage.tsx`
+- [X] T043 [US3] E2E test for complete password recovery journey in `tests/e2e/password-recovery.spec.ts`
 
 **Checkpoint**: Self-service recovery operational and verified without support dependency.
 
@@ -131,18 +131,18 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T044 [P] [US4] Unit test for ContextService, TenantContextResolver, and cross-tenant access denial rules in `apps/api/test/unit/authorization/tenant-context.spec.ts`
-- [ ] T045 [P] [US4] Integration test for atomic organization creation and first admin membership assignment in `apps/api/test/integration/organizations/create-organization.integration-spec.ts`
-- [ ] T046 [P] [US4] Integration test for `/me/contexts` endpoint and cross-tenant boundary enforcement in `apps/api/test/integration/organizations/tenant-isolation.integration-spec.ts`
+- [X] T044 [P] [US4] Unit test for ContextService, TenantContextResolver, and cross-tenant access denial rules in `apps/api/test/unit/authorization/tenant-context.spec.ts`
+- [X] T045 [P] [US4] Integration test for atomic organization creation and first admin membership assignment in `apps/api/test/integration/organizations/create-organization.integration-spec.ts`
+- [X] T046 [P] [US4] Integration test for `/me/contexts` endpoint and cross-tenant boundary enforcement in `apps/api/test/integration/organizations/tenant-isolation.integration-spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T047 [P] [US4] Implement OrganizationRepository and MembershipRepository requiring explicit organizationId in `apps/api/src/modules/organizations/organization.repository.ts` and `apps/api/src/modules/memberships/membership.repository.ts`
-- [ ] T048 [US4] Implement OrganizationService for slug validation, organization creation, and atomic admin membership in `apps/api/src/modules/organizations/organization.service.ts`
-- [ ] T049 [US4] Implement ContextService listing personal and institutional contexts in `apps/api/src/modules/identity/application/context.service.ts`
-- [ ] T050 [US4] Implement `POST /organizations` and `GET /me/contexts` endpoints in `apps/api/src/modules/organizations/presentation/organization.controller.ts` and `apps/api/src/modules/identity/presentation/context.controller.ts`
-- [ ] T051 [P] [US4] Implement accessible frontend ContextSwitcher and CreateOrganization modal in `apps/web/src/features/context-switcher/ContextSwitcher.tsx` and `apps/web/src/features/organizations/CreateOrganizationModal.tsx`
-- [ ] T052 [US4] E2E test for organization creation, context switching, and cross-tenant denial in `tests/e2e/tenant-switching.spec.ts`
+- [X] T047 [P] [US4] Implement OrganizationRepository and MembershipRepository requiring explicit organizationId in `apps/api/src/modules/organizations/organization.repository.ts` and `apps/api/src/modules/memberships/membership.repository.ts`
+- [X] T048 [US4] Implement OrganizationService for slug validation, organization creation, and atomic admin membership in `apps/api/src/modules/organizations/organization.service.ts`
+- [X] T049 [US4] Implement ContextService listing personal and institutional contexts in `apps/api/src/modules/identity/application/context.service.ts`
+- [X] T050 [US4] Implement `POST /organizations` and `GET /me/contexts` endpoints in `apps/api/src/modules/organizations/presentation/organization.controller.ts` and `apps/api/src/modules/identity/presentation/context.controller.ts`
+- [X] T051 [P] [US4] Implement accessible frontend ContextSwitcher and CreateOrganization modal in `apps/web/src/features/context-switcher/ContextSwitcher.tsx` and `apps/web/src/features/organizations/CreateOrganizationModal.tsx`
+- [X] T052 [US4] E2E test for organization creation, context switching, and cross-tenant denial in `tests/e2e/tenant-switching.spec.ts`
 
 **Checkpoint**: Multi-tenancy foundation ready; organizations and personal contexts cleanly separated.
 
@@ -158,20 +158,20 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T053 [P] [US5] Unit test for last-admin protection constraint and institutional role validation in `apps/api/test/unit/memberships/membership-rules.spec.ts`
-- [ ] T054 [P] [US5] Integration test for invitation creation, resend, revoke, and atomic acceptance linking in `apps/api/test/integration/invitations/invitation-lifecycle.integration-spec.ts`
-- [ ] T055 [P] [US5] Integration test for concurrent last-admin removal prevention in `apps/api/test/integration/memberships/last-admin-protection.integration-spec.ts`
+- [X] T053 [P] [US5] Unit test for last-admin protection constraint and institutional role validation in `apps/api/test/unit/memberships/membership-rules.spec.ts`
+- [X] T054 [P] [US5] Integration test for invitation creation, resend, revoke, and atomic acceptance linking in `apps/api/test/integration/invitations/invitation-lifecycle.integration-spec.ts`
+- [X] T055 [P] [US5] Integration test for concurrent last-admin removal prevention in `apps/api/test/integration/memberships/last-admin-protection.integration-spec.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T056 [P] [US5] Create member invitation email HTML/text template in `apps/api/src/modules/mail/templates/invitation.template.ts`
-- [ ] T057 [P] [US5] Implement InvitationRepository and InvitationRole repository in `apps/api/src/modules/invitations/invitation.repository.ts`
-- [ ] T058 [US5] Implement InvitationService for creating, resending, revoking, and accepting invitations in `apps/api/src/modules/invitations/invitation.service.ts`
-- [ ] T059 [US5] Implement MembershipManagementService with last-admin check and status transitions in `apps/api/src/modules/memberships/membership-management.service.ts`
-- [ ] T060 [US5] Implement invitation and member management controllers in `apps/api/src/modules/invitations/presentation/invitation.controller.ts` and `apps/api/src/modules/organizations/presentation/members.controller.ts`
-- [ ] T061 [P] [US5] Implement accessible frontend Member Management page (member list, role edit, suspend/reactivate) in `apps/web/src/features/member-management/MemberListPage.tsx`
-- [ ] T062 [P] [US5] Implement accessible frontend Invite Member modal and Accept Invitation page in `apps/web/src/features/member-management/InviteMemberModal.tsx` and `apps/web/src/features/invitations/AcceptInvitationPage.tsx`
-- [ ] T063 [US5] E2E test for invitation lifecycle, role assignment, acceptance, and last-admin block in `tests/e2e/member-management.spec.ts`
+- [X] T056 [P] [US5] Create member invitation email HTML/text template in `apps/api/src/modules/mail/templates/invitation.template.ts`
+- [X] T057 [P] [US5] Implement InvitationRepository and InvitationRole repository in `apps/api/src/modules/invitations/invitation.repository.ts`
+- [X] T058 [US5] Implement InvitationService for creating, resending, revoking, and accepting invitations in `apps/api/src/modules/invitations/invitation.service.ts`
+- [X] T059 [US5] Implement MembershipManagementService with last-admin check and status transitions in `apps/api/src/modules/memberships/membership-management.service.ts`
+- [X] T060 [US5] Implement invitation and member management controllers in `apps/api/src/modules/invitations/presentation/invitation.controller.ts` and `apps/api/src/modules/organizations/presentation/members.controller.ts`
+- [X] T061 [P] [US5] Implement accessible frontend Member Management page (member list, role edit, suspend/reactivate) in `apps/web/src/features/member-management/MemberListPage.tsx`
+- [X] T062 [P] [US5] Implement accessible frontend Invite Member modal and Accept Invitation page in `apps/web/src/features/member-management/InviteMemberModal.tsx` and `apps/web/src/features/invitations/AcceptInvitationPage.tsx`
+- [X] T063 [US5] E2E test for invitation lifecycle, role assignment, acceptance, and last-admin block in `tests/e2e/member-management.spec.ts`
 
 **Checkpoint**: Institutional member onboarding, role assignment, and organization administration fully operational.
 
@@ -187,17 +187,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T064 [P] [US6] Unit test for PlatformRoleGuard and SaaS admin policy evaluation in `apps/api/test/unit/authorization/platform-role.spec.ts`
-- [ ] T065 [P] [US6] Integration test for SaaS admin CLI provisioning script, organization listing, and status update in `apps/api/test/integration/platform/platform-admin.integration-spec.ts`
-- [ ] T066 [P] [US6] Integration test verifying non-SaaS users and institutional admins receive 403 on platform endpoints in `apps/api/test/integration/platform/platform-access-denial.integration-spec.ts`
+- [X] T064 [P] [US6] Unit test for PlatformRoleGuard and SaaS admin policy evaluation in `apps/api/test/unit/authorization/platform-role.spec.ts`
+- [X] T065 [P] [US6] Integration test for SaaS admin CLI provisioning script, organization listing, and status update in `apps/api/test/integration/platform/platform-admin.integration-spec.ts`
+- [X] T066 [P] [US6] Integration test verifying non-SaaS users and institutional admins receive 403 on platform endpoints in `apps/api/test/integration/platform/platform-access-denial.integration-spec.ts`
 
 ### Implementation for User Story 6
 
-- [ ] T067 [P] [US6] Implement operational CLI provisioning script for SaaS Admin in `apps/api/src/modules/platform/scripts/provision-saas-admin.ts`
-- [ ] T068 [US6] Implement PlatformService and PlatformRoleGuard in `apps/api/src/modules/platform/platform.service.ts` and `apps/api/src/modules/authorization/platform-role.guard.ts`
-- [ ] T069 [US6] Implement `GET /platform/organizations` and `PATCH /platform/organizations/{organizationId}/status` in `apps/api/src/modules/platform/presentation/platform.controller.ts`
-- [ ] T070 [P] [US6] Implement accessible frontend SaaS Admin platform dashboard in `apps/web/src/features/platform/PlatformOrganizationsPage.tsx`
-- [ ] T071 [US6] E2E test for SaaS admin operations, audit generation, and unauthorized access rejection in `tests/e2e/platform-admin.spec.ts`
+- [X] T067 [P] [US6] Implement operational CLI provisioning script for SaaS Admin in `apps/api/src/modules/platform/scripts/provision-saas-admin.ts`
+- [X] T068 [US6] Implement PlatformService and PlatformRoleGuard in `apps/api/src/modules/platform/platform.service.ts` and `apps/api/src/modules/authorization/platform-role.guard.ts`
+- [X] T069 [US6] Implement `GET /platform/organizations` and `PATCH /platform/organizations/{organizationId}/status` in `apps/api/src/modules/platform/presentation/platform.controller.ts`
+- [X] T070 [P] [US6] Implement accessible frontend SaaS Admin platform dashboard in `apps/web/src/features/platform/PlatformOrganizationsPage.tsx`
+- [X] T071 [US6] E2E test for SaaS admin operations, audit generation, and unauthorized access rejection in `tests/e2e/platform-admin.spec.ts`
 
 **Checkpoint**: Platform operations isolated, operational provisioning functional, audit logs complete.
 
@@ -207,11 +207,11 @@
 
 **Purpose**: Cross-tenant isolation verification, security hardening, audit retention cleanup, accessibility audit, and quickstart end-to-end execution
 
-- [ ] T072 [P] Implement automated cross-tenant security matrix test suite (Tenant A vs Tenant B vs Personal) in `tests/integration/security/cross-tenant-matrix.integration-spec.ts`
-- [ ] T073 [P] Implement AuditEvent retention cleanup job with unit tests in `apps/api/src/modules/audit/audit-cleanup.job.ts` and `apps/api/test/unit/audit/audit-cleanup.spec.ts`
-- [ ] T074 [P] Implement automated accessibility (WCAG 2.2 AA) tests covering all auth, context, and admin pages in `tests/e2e/accessibility.spec.ts`
-- [ ] T075 [P] Implement OpenAPI documentation endpoint synchronization test in `apps/api/test/integration/openapi/contract-sync.integration-spec.ts`
-- [ ] T076 Run complete quickstart verification workflow (`pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, `pnpm build`, `pnpm test:e2e`) per `specs/002-identity-tenancy/quickstart.md`
+- [X] T072 [P] Implement automated cross-tenant security matrix test suite (Tenant A vs Tenant B vs Personal) in `tests/integration/security/cross-tenant-matrix.integration-spec.ts`
+- [X] T073 [P] Implement AuditEvent retention cleanup job with unit tests in `apps/api/src/modules/audit/audit-cleanup.job.ts` and `apps/api/test/unit/audit/audit-cleanup.spec.ts`
+- [X] T074 [P] Implement automated accessibility (WCAG 2.2 AA) tests covering all auth, context, and admin pages in `tests/e2e/accessibility.spec.ts`
+- [X] T075 [P] Implement OpenAPI documentation endpoint synchronization test in `apps/api/test/integration/openapi/contract-sync.integration-spec.ts`
+- [X] T076 Run complete quickstart verification workflow (`pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, `pnpm build`, `pnpm test:e2e`) per `specs/002-identity-tenancy/quickstart.md`
 
 ---
 
