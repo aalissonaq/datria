@@ -25,12 +25,23 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8025/livez || exit 1" --health-interval=5s --health-timeout=3s --health-retries=12
+
     env:
       NODE_ENV: test
       DATABASE_URL: mysql://root:rootpassword@127.0.0.1:3306/datria_test
       API_PORT: 3000
       WEB_ORIGIN: http://localhost:5173
       VITE_API_BASE_URL: http://localhost:3000/api/v1
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: 1025
+      SMTP_FROM: no-reply@datria.local
+      MAILPIT_UI_URL: http://127.0.0.1:8025
 
     steps:
       - name: Checkout repository
