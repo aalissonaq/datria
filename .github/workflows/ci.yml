@@ -87,6 +87,9 @@ jobs:
       - name: Apply Prisma migrations to CI database
         run: pnpm prisma migrate deploy
 
+      - name: Seed static roles in CI database
+        run: pnpm prisma:seed
+
       - name: Run unit and integration tests
         run: pnpm test
 
