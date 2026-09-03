@@ -84,6 +84,9 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm typecheck
 
+      - name: Apply Prisma migrations to CI database
+        run: pnpm prisma migrate deploy
+
       - name: Run unit and integration tests
         run: pnpm test
 
