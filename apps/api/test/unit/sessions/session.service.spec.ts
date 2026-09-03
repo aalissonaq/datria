@@ -118,7 +118,10 @@ describe("SessionService (Unit)", () => {
 
       expect(result.accessToken).toBe("signed-jwt-token");
       expect(result.refreshToken).toBe("raw-refresh-token-12345");
-      expect(mockSessionRepo.revokeSession).toHaveBeenCalledWith("session-1", "ROTATED");
+      expect(mockSessionRepo.revokeSession).toHaveBeenCalledWith(
+        "session-1",
+        "ROTATED",
+      );
       expect(mockSessionRepo.createSession).toHaveBeenCalled();
     });
 
