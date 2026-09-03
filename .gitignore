@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build artifacts and compiled files
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables & local secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage & reports
+coverage/
+playwright-report/
+test-results/
+.nyc_output/
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Generated Prisma artifacts
+# Note: Prisma Client will be generated into node_modules or designated path

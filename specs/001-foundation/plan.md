@@ -176,6 +176,7 @@ Root scripts expose:
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm test`
+- `pnpm test:mysql` (CI verification against the MySQL service)
 - `pnpm test:e2e`
 - `pnpm format:check`
 
@@ -233,4 +234,3 @@ the foundation for later versioned migrations. See [data-model.md](data-model.md
 No constitution violation or exceptional complexity is approved. The explicit decision not
 to add Nx, Turborepo, Docker as a local requirement, Redis, queues, authentication, or
 domain entities keeps this increment within its validated scope.
-

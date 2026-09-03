@@ -1,0 +1,34 @@
+{
+  "name": "datria-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Datria monorepo workspace",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "^24.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @datria/api --filter @datria/web dev",
+    "dev:api": "pnpm --filter @datria/api dev",
+    "dev:web": "pnpm --filter @datria/web dev",
+    "build": "pnpm --recursive --filter @datria/* run build",
+    "lint": "pnpm --recursive --filter @datria/* run lint",
+    "typecheck": "pnpm --recursive --filter @datria/* run typecheck",
+    "test": "pnpm --recursive --filter @datria/* run test",
+    "test:mysql": "pnpm --filter @datria/api test:mysql",
+    "test:e2e": "playwright test",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "prettier": "^3.5.0",
+    "prisma": "^6.4.0",
+    "typescript": "^5.7.3"
+  }
+}

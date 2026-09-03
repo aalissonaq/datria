@@ -1,0 +1,15 @@
+// ==============================================================================
+// Datria Foundation Prisma Schema
+// Increment: 001-foundation
+// Note: No domain models are defined in this increment per data-model.md.
+// Persistent entities will be introduced in 002-identity-tenancy.
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}

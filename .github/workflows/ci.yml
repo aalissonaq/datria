@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, 001-foundation]
+  pull_request:
+    branches: [master, main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Mandatory Quality Gates
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: datria_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: mysql://root:rootpassword@127.0.0.1:3306/datria_test
+      API_PORT: 3000
+      WEB_ORIGIN: http://localhost:5173
+      VITE_API_BASE_URL: http://localhost:3000/api/v1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mask CI-only database values
+        shell: bash
+        run: |
+          echo "::add-mask::rootpassword"
+          echo "::add-mask::$DATABASE_URL"
+
+      - name: Setup Node.js 24 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Approve build dependencies
+        run: pnpm approve-builds --all
+
+      - name: Generate Prisma Client
+        run: pnpm prisma:generate
+
+      - name: Verify code formatting
+        run: pnpm format:check
+
+      - name: Run ESLint across workspaces
+        run: pnpm lint
+
+      - name: Run TypeScript type check
+        run: pnpm typecheck
+
+      - name: Run unit and integration tests
+        run: pnpm test
+
+      - name: Verify MySQL readiness integration
+        run: pnpm test:mysql
+
+      - name: Build all workspaces
+        run: pnpm build
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright E2E smoke tests
+        run: pnpm test:e2e
+
+      - name: Verify log secret hygiene
+        if: always()
+        shell: bash
+        run: |
+          for output_dir in logs test-results playwright-report; do
+            if [ -d "$output_dir" ] && grep -RIlF -- "$DATABASE_URL" "$output_dir" | grep -q .; then
+              echo "Sensitive database configuration was written to $output_dir."
+              exit 1
+            fi
+          done
