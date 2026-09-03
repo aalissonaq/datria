@@ -17,10 +17,16 @@
     "typecheck": "pnpm --recursive --filter @datria/* run typecheck",
     "test": "pnpm --recursive --filter @datria/* run test",
     "test:mysql": "pnpm --filter @datria/api test:mysql",
+    "test:integration": "pnpm --filter @datria/api test:mysql",
     "test:e2e": "playwright test",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.0"
@@ -29,6 +35,8 @@
     "@playwright/test": "^1.50.0",
     "prettier": "^3.5.0",
     "prisma": "^6.4.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.13",
     "typescript": "^5.7.3"
   }
 }
