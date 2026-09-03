@@ -42,9 +42,11 @@
 
 ## Notes
 
-- The technical plan must decide password hashing parameters, session persistence and
-  rotation, token lifetimes, CSRF controls, e-mail adapter, authorization enforcement
-  pattern, and audit storage.
+- The technical plan resolves password hashing parameters, session persistence and
+  rotation, token lifetimes, CSRF controls, e-mail adapter, authorization enforcement,
+  Prisma modeling, audit storage, retention, and isolation testing.
+- `SEC-EXC-001` records the Product Owner decision to retain an eight-character composed
+  password minimum with mandatory compensating controls and review before production.
 - Exact permission actions for future academic modules are intentionally deferred to those
   feature specifications.
 - The specification is ready for Product Owner review and `/speckit.plan`.
